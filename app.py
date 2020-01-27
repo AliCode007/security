@@ -32,9 +32,9 @@ def add_user():
     print(data)
     certif, key = ldapOperations.add_user(data['commonName'],data['username'],data['password'])
     if certif == None or key == None :
-        return {"res" : "Failure" }
+        return {"res" : False }
 
-    return {"res" : "success",
+    return {"res" : True,
             "certif" : certif,
             "key" : key
             }
@@ -47,6 +47,7 @@ def login():
     password = data['password']
     certif = data['certif']
     res,msg = ldapOperations.login(commonName,password,certif)
+
     return {
         "res" : res,
         "msg" : msg

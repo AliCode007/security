@@ -26,9 +26,8 @@ class Server :
         """Sets up handling for incoming clients."""
         while True:
             try:
-                client, client_address = self.sock.accept()
+                client, client_address = self.sock. accept()
                 print("a client has connected.")
-                client.send("You are now connected ! ".encode("utf8"))
                 Thread(target=self.handle_client, args=(client,)).start()
             except Exception:
                 traceback.print_exc()
@@ -40,22 +39,24 @@ class Server :
         data = conn.recv(BUFSIZ).decode("utf8")
         data = json.loads(data)
         name = data['commonName']
-        welcome = 'Welcome {} ! '.format(name)
-        conn.send(bytes(welcome, "utf8"))
         self.connectedUsers[name] = conn
         while True:
-            data = conn.recv(BUFSIZ)
-            print(data)
-            # data = json.loads(data)
-            data = ast.literal_eval(data.decode('utf-8'))
-            target = data['commonName']
-            msg = data['msg']
-            data = {
-                'from': name,
-                'msg': msg
-            }
-            data = json.dumps(data).encode("utf-8")
-            if target in self.connectedUsers:
-                self.connectedUsers[target].sendall(data)
+            try :
+                data = conn.recv(BUFSIZ)
+                print(data)
+                data = json.loads(data)
+                target = data['commonName']
+                msg = data['msg']
+                data = {
+                    'from': name,
+                    'msg': msg
+                }
+                data = json.dumps(data).encode("cp1252")
+                if target in self.connectedUsers:
+                    self.connectedUsers[target].sendall(data)
+            except Exception :
+                print('Log out from {}'.format(name))
+                del self.connectedUsers[name]
+
 
 
